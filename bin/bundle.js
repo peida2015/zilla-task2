@@ -60,6 +60,59 @@
 	var currStudByGrades = [299, 284, 297, 322, 332, 353, 503, 175, 71, 48, 26, 29];
 	var schools = ["A", "B", "C", "D", "L", "P", "R", "S", "U", "V"];
 
+	var plotPieGraph = function plotPieGraph(studentsData) {
+	  // Not exited unexpectedly but not still enrolled
+	  var shortStays = studentsData.filter(function (record) {
+	    return record.ExitedUnexpectedly === "N" && record["Still Enrolled"] === "N";
+	  });
+
+	  var shortStaysByYrsAtZilla = byYrsAtZilla(shortStays);
+	  var sum = shortStays.length;
+
+	  var svg = _d2.default.select('#pie-graph').append('svg').attr('class', 'pg1').attr('width', 700).attr('height', 500);
+
+	  var colors = _d2.default.schemeAccent;
+
+	  var pie = _d2.default.pie()(shortStaysByYrsAtZilla);
+	  var piegraph = svg.append('g').attr('class', 'pie').attr('transform', "translate(430, 275)");
+	  var d3arc = _d2.default.arc().innerRadius(0).outerRadius(200);
+	  var slices = piegraph.selectAll('.slice').data(pie).enter().append('g').attr('class', 'slice');
+	  slices.append('path').attr('d', function (d) {
+	    return d3arc(d);
+	  }).attr('fill', function (d, idx) {
+	    return colors[idx];
+	  });
+
+	  // Pie slices labels
+	  d3arc.outerRadius(300);
+	  slices.append('text').attr('class', 'middle-anchored-text').attr('transform', function (d) {
+	    var center = d3arc.centroid(d);
+	    return "translate(" + center + ")";
+	  }).html(function (d) {
+	    return "<tspan>" + d.data + "</tspan>" + "<tspan x=0px dy=20px>(" + Math.round(d.data / sum * 100, -3) + "%)</tspan>";
+	  });
+
+	  // Pie graph legend
+	  var legendsWrap = svg.append('g').attr('class', 'legend').attr('transform', 'translate(30, 90)');
+	  var legendWraps = legendsWrap.selectAll('.chart-key').data(shortStaysByYrsAtZilla).enter().append('g').attr('class', 'chart-key');
+	  legendWraps.append('rect').attr('width', 20).attr('height', 20).attr('x', 0).attr('y', function (d, idx) {
+	    return 30 * (idx + 1);
+	  }).attr('fill', function (d, idx) {
+	    return colors[idx];
+	  });
+	  legendWraps.append('text').attr('x', 30).attr('dy', function (d, idx) {
+	    return 30 * (idx + 1) + 15;
+	  }).text(function (d, idx) {
+	    return idx + 1 < 5 ? idx + 1 : "5+";
+	  });
+
+	  // Legend title
+	  legendsWrap.append('text').attr('y', 10).text('#Yrs At Zilla');
+
+	  // Pie graph title
+	  svg.append('g').append('text').attr('class', 'middle-anchored-text title').attr('y', 30).attr('x', 350).text("Students Not Still Enrolled by Years At Zilla");
+	};
+
 	var plotBarGraph = function plotBarGraph(studentsData) {
 	  var unexpected = studentsData.filter(function (record) {
 	    return record.ExitedUnexpectedly === "Y";
