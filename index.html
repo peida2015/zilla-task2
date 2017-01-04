@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Zilla Attrition Data Analysis</title>
+    <script type="text/javascript" src="./bin/bundle.js" async deferred></script>
+    <link rel="stylesheet" href="./main.css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <div class="page-margin">
+      <h1>I - Zilla Attrition Data</h3>
+      <br>
+      <p>
+        My regional VP's question concerns how soon students would transfer out of Zilla when they found out Zilla was not a good fit.  Unfortunately, the best answer we have from the attrition data is inconclusive because the data is insufficient to determine actual reasons the students leave Zilla.  The analysis is detailed below.  A quick note on the notation: ("LastYearID" === "16") indicates a filter applied on the "LastYear" field with value equal to "16", using Javascript logical operators notation.
+      </p>
+      <p>
+        The idea is to identify those students who left Zilla because Zilla do not fit them and then sort them by number of years they spend in Zilla.  The first step to accomplish this is to apply a filter on the "ExitedUnexpectedly" field with value equals "Y".  There are 1650 records of students who exited before they graduated and they are assumed to have all left Zilla because they do not think Zilla fit them.  Next, we sorted those students by the number of years they stayed at Zilla at the time of their exit.  The counts of students left unexpectedly by years at Zilla are shown in the piegraph.  Out of the 1650 students who left Zilla unexpectedly, 726 (44%) transferred out within 1 year of entry and 1162 (70%) transferred out within 2 years of entry.  If we broaden the scope to include every student who left Zilla before 12th grade, the result is similar.  There are 2065 records of students not enrolled and their "MostRecentGrade" !== "12".  Within this broader group, 897 (43%) left within 1 year and 1447 (70%) left within 2 years of entry.  Our analysis seems to confirm the regional VP's hypothesis that most of those who do not see Zilla as a good fit leave sooner rather than later.
+      </p>
+      <div class="content-width thin-border thick-margin" id="pie-graph"></div>
+      <p>
+        The analysis above rests on the assumption that all students who left unexpectedly was because Zilla was not good fit.  This may not be a very good assumption.  There could be reasons other than Zilla's being a good fit for them.  For example, if Zilla is in a region with a large number of migrants they could be leaving because their parents leave for other job opportunities.  Some of those students could also drop out of school entirely and has nothing to do with fit.  Use of another source of data such as a parent survey that document the reason of leaving could yield a more conclusive analysis in that case.  Finally, it should be recognized that it is difficult to identify the point at which students or their parents realized that Zilla does not fit them.  It is assumed that they find Zilla to be unfit as soon as they came in.  We simply do not know from the data.
+      </p>
+      <p>
+        Data suggests that migrant students may have an impact on Zilla's attrition numbers.  Most notably, the current 7th grade class ("Still Enrolled" === "Y" && "MostRecentGrade" === "7") has 503 students, with about 75% (378) entered within the last three school years (2005-2008) and over half (268) of them entered Zilla last year (filter Earliest Yr === "2006-2007") alone.  That makes the enrollment of this class about 58% more than the mean enrollment in the five grades after it.  During that same year, 74 sixth graders left unexpectedly.  It is about 260% of the mean attrition of five classes after it or about the (260% of mean attrition/158% of mean enrollment) = 165% of the mean attrition <i>rate</i> of the five classes after it.  The table below lists the enrollment and unexpected exits data for different grades for comparison.  It is interesting that new enrollment do not have much effect on attrition until the class is doubled in a year.  This result suggests that for the most part Zilla students are quite tolerant of changes in enrollment number, up to a certain point.  If new enrollment numbers are tied to school quality, it could be argued that most students give Zilla some time before moving on to other options.  It should also reduce our confidence in the assumption that Zilla's unfit for them was the reason that students leave.
+      </p>
+      <div class="content-width thin-border thick-margin" id="table"></div>
+      <p>
+        One interesting trend to note is that middle school grades seem to suffer higher attrition on average than elementary school grades each year.  The students who left Zilla unexpectedly were filtered by the year of their leaving (LastYearID === "13" to "16").  Within each group, the total number of elementary school grades (grades 1-5) unexpected exits and middle school grades (6-8) unexpected exits were obtained by applying filter for "MostRecentGrade" equals those grade groups.  An average number of unexpected exits per grade were then obtain by dividing the total elementary school counts by 5 and the total middle school counts by 3.  The average attrition per grade in elementary school and middle school are listed in the second table below.  The higher attrition could simply mean higher enrollment at middle school grades, which would not be surprising.  Based on current enrollment ("Still Enrolled" === "Y"), elementary school enrollment is 306.8 per grade and middle school enrollment is 343.7 per grade.  The middle school enrollments is 12% higher on average but their average attrition is consistently more than 38% greater than the elementary school's.  In the extreme case (in 2006-2007), middle school attrition is 75% higher on average.  It should be noted that this trend is a complete reversal of first year's data (LastYearID === "12"), which shows average elementary school attrition at 25 and average middle school attrition at 14.3.  While this may simply mean the average enrollments in middle schools were low that year, it is a reason for further investigation.  It should be brought to the CEO's attention.
+      </p>
+      <div class="content-width thin-border thick-margin" id="table2"></div>
+      <p>
+        While our analysis shows that most students who leave Zilla unexpectedly do so within first two years of entry, there is evidence that suggests students are tolerant of high new enrollment and possible related changes in school quality.  The lack of documentation of reason of leaving Zilla also cast doubts on the assumption that all students leaving Zilla unexpectedly because Zilla is unfit for them.  The fact that Zilla could experience relatively large changes in enrollment supports an alternative explanation that students may be leaving simply because their parents are moving.  It cannot be concluded from our data whether the VP's hypothesis is true.
+      </p>
+      <br>
+      <h1>II. Needs Assessment</h1>
+      <br>
+      <p>
+        These are the questions I will ask:
+        <ol>
+          <li>How could I access the data from the two systems?  Are there any API documentations?  Who are the data provider?
+            <br>
+            <br>
+            <i>
+              This is the most important question because we need to be sure we can have access to the data, know how to access the data, and who might be able to provide help.
+            </i>
+          </li>
+          <br>
+          <li>What are some of the data fields in each record in the system?  What are the common fields that link records from Student Information System to Mealtime?
+            <br>
+            <br>
+            <i>
+              This question is possibly asking for more details than the food service manager can answer but any details will help us reconstruct the data models within the two systems.  There must be at least field that "bridges" the two systems.  It could be, for example, a StudentID or FullName of a student or another field that uniquely identify a record in each system.  If possible, precise definitions of the fields in each record should be documented.
+            </i>
+          </li>
+          <br>
+          <li>What are some main features wanted for the integrated system? Who will be using the system? How frequent data need to be updated?
+            <br>
+            <br>
+            <i>
+              This would help determine the requirements for the integrated system.  Answers to these questions could help determine the appropriate data warehousing technologies, which have performance and cost implications.  They could also help determine how to best to meet data reporting needs.
+            </i>
+          </li>
+        </ol>
+        <br>
+      </p>
+      <p>
+        We could document the answers to these questions in an online form.  The form may have such fields as DataProvider, DocLink, APIAccessPoint, etc. to give structure to the answers.  The relational data models of the Student Information System and Mealtime system as well as the integrated system should be sketched out.
+      </p>
+    </div>
+  </body>
+</html>
