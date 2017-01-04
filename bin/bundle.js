@@ -53,27 +53,86 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_d2.default.csv('./Zilla-Data-Analysis-Task-data.csv', undefined, function (data) {
-	  plotBarGraph(data);
 	  plotPieGraph(data);
 	});
 
 	var currStudByGrades = [299, 284, 297, 322, 332, 353, 503, 175, 71, 48, 26, 29];
 	var schools = ["A", "B", "C", "D", "L", "P", "R", "S", "U", "V"];
 
-	var plotPieGraph = function plotPieGraph(studentsData) {
-	  // Not exited unexpectedly but not still enrolled
-	  var shortStays = studentsData.filter(function (record) {
-	    return record.ExitedUnexpectedly === "N" && record["Still Enrolled"] === "N";
+	var drawTable = function drawTable() {
+	  // Title
+	  _d2.default.select('#table').append('h3').text("2006-2007 Enrollment and 2005-2006 Attrition By Grades");
+
+	  var data = [{ attrition: 23, enrollment: 284, newEnroll: 34 }, { attrition: 34, enrollment: 297, newEnroll: 44 }, { attrition: 28, enrollment: 322, newEnroll: 65 }, { attrition: 26, enrollment: 332, newEnroll: 84 }, { attrition: 31, enrollment: 353, newEnroll: 104 }, { attrition: 74, enrollment: 503, newEnroll: 268 }];
+
+	  var tblDIV = _d2.default.select("#table").append('table').attr('class', 'rel-center');
+
+	  var columns = ["06-07 Grade", "06-07 New Enrollment", "07-08 Enrollment", "06-07 Unexpected Exits"];
+
+	  tblDIV.append('tr').selectAll('.heading').data(columns).enter().append('th').attr('class', '.heading').text(function (d) {
+	    return d;
 	  });
 
-	  var shortStaysByYrsAtZilla = byYrsAtZilla(shortStays);
-	  var sum = shortStays.length;
+	  var rows = tblDIV.selectAll(".grade").data(data).enter().append('tr').attr('class', 'grade');
+
+	  rows.append('td').text(function (d, idx) {
+	    return idx + 1;
+	  });
+	  rows.append('td').text(function (d) {
+	    return d.newEnroll;
+	  });
+	  rows.append('td').text(function (d) {
+	    return d.enrollment;
+	  });
+	  rows.append('td').text(function (d) {
+	    return d.attrition;
+	  });
+	};
+
+	var drawTable2 = function drawTable2() {
+	  // Title
+	  _d2.default.select('#table2').append('h3').text("Elementary and Middle School Average Attritions By School Year");
+
+	  var data = [{ elementary: 25, middle: 14.3 }, { elementary: 24, middle: 38.3 }, { elementary: 37.6, middle: 56.3 }, { elementary: 27.4, middle: 38 }, { elementary: 28.4, middle: 49.7 }];
+
+	  var tblDIV = _d2.default.select("#table2").append('table').attr('class', 'rel-center');
+
+	  var columns = ["School Year", "Elementary", "Middle"];
+
+	  tblDIV.append('tr').selectAll('.heading').data(columns).enter().append('th').attr('class', '.heading').text(function (d) {
+	    return d;
+	  });
+
+	  var rows = tblDIV.selectAll(".grade").data(data).enter().append('tr').attr('class', 'grade');
+
+	  rows.append('td').text(function (d, idx) {
+	    return idx + 2002 + "-" + (idx + 1 + 2002);
+	  });
+	  rows.append('td').text(function (d) {
+	    return d.elementary;
+	  });
+	  rows.append('td').text(function (d) {
+	    return d.middle;
+	  });
+	};
+
+	drawTable();
+	drawTable2();
+
+	var plotPieGraph = function plotPieGraph(studentsData) {
+	  // Exited unexpectedly but not still enrolled
+	  var unexpExits = studentsData.filter(function (record) {
+	    return record.ExitedUnexpectedly === "Y";
+	  });
+
+	  var unexpExitsByYrsAtZilla = byYrsAtZilla(unexpExits);
+	  var sum = unexpExits.length;
 
 	  var svg = _d2.default.select('#pie-graph').append('svg').attr('class', 'pg1').attr('width', 700).attr('height', 500);
 
 	  var colors = _d2.default.schemeAccent;
 
-	  var pie = _d2.default.pie()(shortStaysByYrsAtZilla);
+	  var pie = _d2.default.pie()(unexpExitsByYrsAtZilla);
 	  var piegraph = svg.append('g').attr('class', 'pie').attr('transform', "translate(430, 275)");
 	  var d3arc = _d2.default.arc().innerRadius(0).outerRadius(200);
 	  var slices = piegraph.selectAll('.slice').data(pie).enter().append('g').attr('class', 'slice');
@@ -94,7 +153,7 @@
 
 	  // Pie graph legend
 	  var legendsWrap = svg.append('g').attr('class', 'legend').attr('transform', 'translate(30, 90)');
-	  var legendWraps = legendsWrap.selectAll('.chart-key').data(shortStaysByYrsAtZilla).enter().append('g').attr('class', 'chart-key');
+	  var legendWraps = legendsWrap.selectAll('.chart-key').data(unexpExitsByYrsAtZilla).enter().append('g').attr('class', 'chart-key');
 	  legendWraps.append('rect').attr('width', 20).attr('height', 20).attr('x', 0).attr('y', function (d, idx) {
 	    return 30 * (idx + 1);
 	  }).attr('fill', function (d, idx) {

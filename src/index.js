@@ -1,22 +1,77 @@
 import d3 from "./d3.js";
 
 d3.csv('./Zilla-Data-Analysis-Task-data.csv', undefined , (data)=> {
-  plotBarGraph(data);
   plotPieGraph(data);
 });
 
 var currStudByGrades = [299, 284, 297, 322, 332, 353, 503, 175, 71, 48, 26, 29];
 var schools = ["A", "B", "C", "D", "L","P","R","S","U","V"];
 
+let drawTable = ()=> {
+  // Title
+  d3.select('#table').append('h3').text("2006-2007 Enrollment and 2005-2006 Attrition By Grades")
+
+  let data = [  { attrition: 23, enrollment: 284, newEnroll: 34  },
+                { attrition: 34, enrollment: 297, newEnroll: 44  },
+                { attrition: 28, enrollment: 322, newEnroll: 65  },
+                { attrition: 26, enrollment: 332, newEnroll: 84  },
+                { attrition: 31, enrollment: 353, newEnroll: 104 },
+                { attrition: 74, enrollment: 503, newEnroll: 268 }  ];
+
+  let tblDIV = d3.select("#table").append('table').attr('class', 'rel-center');
+
+  let columns = ["06-07 Grade", "06-07 New Enrollment", "07-08 Enrollment", "06-07 Unexpected Exits"];
+
+  tblDIV.append('tr').selectAll('.heading').data(columns).enter()
+      .append('th').attr('class', '.heading')
+      .text((d)=>{ return d; });
+
+  let rows = tblDIV.selectAll(".grade").data(data).enter()
+      .append('tr').attr('class', 'grade');
+
+  rows.append('td').text((d, idx)=> { return idx+1; });
+  rows.append('td').text((d)=> { return d.newEnroll; });
+  rows.append('td').text((d)=> { return d.enrollment; });
+  rows.append('td').text((d)=> { return d.attrition; });
+}
+
+let drawTable2 = ()=> {
+  // Title
+  d3.select('#table2').append('h3').text("Elementary and Middle School Average Attritions By School Year")
+
+  let data = [  { elementary: 25, middle: 14.3  },
+                { elementary: 24, middle: 38.3  },
+                { elementary: 37.6, middle: 56.3  },
+                { elementary: 27.4, middle: 38  },
+                { elementary: 28.4, middle: 49.7  }  ];
+
+  let tblDIV = d3.select("#table2").append('table').attr('class', 'rel-center');
+
+  let columns = ["School Year", "Elementary", "Middle"];
+
+  tblDIV.append('tr').selectAll('.heading').data(columns).enter()
+      .append('th').attr('class', '.heading')
+      .text((d)=>{ return d; });
+
+  let rows = tblDIV.selectAll(".grade").data(data).enter()
+      .append('tr').attr('class', 'grade');
+
+  rows.append('td').text((d, idx)=> { return idx+2002 + "-" + (idx+1+2002); });
+  rows.append('td').text((d)=> { return d.elementary; });
+  rows.append('td').text((d)=> { return d.middle; });
+}
+
+drawTable();
+drawTable2();
 
 let plotPieGraph = (studentsData)=> {
-  // Not exited unexpectedly but not still enrolled
-  let shortStays = studentsData.filter((record)=> {
-    return record.ExitedUnexpectedly === "N" && record["Still Enrolled"] === "N"
+  // Exited unexpectedly but not still enrolled
+  let unexpExits = studentsData.filter((record)=> {
+    return record.ExitedUnexpectedly === "Y";
   });
 
-  let shortStaysByYrsAtZilla = byYrsAtZilla(shortStays);
-  let sum = shortStays.length;
+  let unexpExitsByYrsAtZilla = byYrsAtZilla(unexpExits);
+  let sum = unexpExits.length;
 
   let svg = d3.select('#pie-graph').append('svg').attr('class', 'pg1')
     .attr('width', 700)
@@ -24,7 +79,7 @@ let plotPieGraph = (studentsData)=> {
 
   let colors = d3.schemeAccent;
 
-  let pie = d3.pie()(shortStaysByYrsAtZilla);
+  let pie = d3.pie()(unexpExitsByYrsAtZilla);
   let piegraph = svg.append('g').attr('class', 'pie')
                   .attr('transform', "translate(430, 275)");
   let d3arc = d3.arc().innerRadius(0).outerRadius(200);
@@ -47,7 +102,7 @@ let plotPieGraph = (studentsData)=> {
   // Pie graph legend
   let legendsWrap = svg.append('g').attr('class', 'legend')
                 .attr('transform', 'translate(30, 90)');
-  let legendWraps = legendsWrap.selectAll('.chart-key').data(shortStaysByYrsAtZilla).enter()
+  let legendWraps = legendsWrap.selectAll('.chart-key').data(unexpExitsByYrsAtZilla).enter()
           .append('g').attr('class', 'chart-key');
   legendWraps.append('rect').attr('width', 20).attr('height', 20)
           .attr('x', 0).attr('y', (d, idx)=> { return 30*(idx+1); })
